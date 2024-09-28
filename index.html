@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Understanding the Marketplace and Marketing Environment</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is the microenvironment in marketing?", choices: ["The larger societal forces that affect a company's marketing", "The internal departments of a company that work together to serve the market", "The actors close to the company that affect its ability to serve customers", "The economic trends that influence consumer behavior"], correct: 2 },
+        { question: "Which of the following is not part of the company's microenvironment?", choices: ["Suppliers", "Competitors", "Marketing intermediaries", "Natural forces"], correct: 3 },
+        { question: "What is an example of a marketing intermediary?", choices: ["A competitor offering similar products", "A logistics company like FedEx that helps distribute goods", "The company’s finance department", "A government agency regulating trade"], correct: 1 },
+        { question: "Which of the following is not a type of customer market?", choices: ["Consumer market", "Business market", "Government market", "Environmental market"], correct: 3 },
+        { question: "What does the macroenvironment include?", choices: ["External forces such as demographic, economic, and cultural factors that affect the company's microenvironment", "The internal resources a company has at its disposal", "The company’s strategic business units", "The daily operational decisions of a company"], correct: 0 },
+        { question: "Which macroenvironmental force is related to population characteristics such as age, gender, and race?", choices: ["Economic forces", "Demographic forces", "Natural forces", "Technological forces"], correct: 1 },
+        { question: "What is a SWOT analysis used for in marketing?", choices: ["To assess a company's supply chain performance", "To evaluate a company's competitive position and develop strategic planning", "To predict customer demand in different markets", "To identify new product development opportunities"], correct: 1 },
+        { question: "Which of the following is an example of a strength in a SWOT analysis?", choices: ["A new competitor entering the market", "Strong brand reputation", "Dependence on a single product", "Economic downturn affecting consumer spending"], correct: 1 },
+        { question: "In a SWOT analysis, what would be classified as a threat?", choices: ["A company's technological expertise", "Growing demand for sustainable products", "New regulations increasing operational costs", "Expanding into emerging markets"], correct: 2 },
+        { question: "What is an example of a natural force in the macroenvironment?", choices: ["A competitor launching a new product", "Government-imposed trade restrictions", "A shortage of raw materials", "The adoption of a new technology by a company"], correct: 2 },
+        { question: "What role do publics play in the microenvironment?", choices: ["They are internal departments that influence product development", "They consist of any group that has an interest in or impact on a company’s ability to achieve its objectives", "They refer to competitors trying to take market share", "They are customers who purchase the company’s products"], correct: 1 },
+        { question: "Which of the following is an example of a financial public?", choices: ["Customers purchasing a product", "A bank providing funding to a company", "A competitor in the same industry", "An environmental organization"], correct: 1 },
+        { question: "What is a characteristic of the economic environment in the macroenvironment?", choices: ["It deals with the influence of demographics on marketing strategies", "It refers to legislation and regulations that affect business operations", "It includes factors that affect consumer purchasing power and spending patterns", "It consists of cultural values and social trends"], correct: 2 },
+        { question: "How can companies respond to technological forces in the macroenvironment?", choices: ["By developing legal strategies", "By adopting innovations like artificial intelligence in customer service", "By entering new geographic markets", "By reducing product prices"], correct: 1 },
+        { question: "In a SWOT analysis, what is an example of an opportunity?", choices: ["Limited product range", "Growing consumer interest in eco-friendly products", "Increased production costs", "Lack of brand recognition"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
